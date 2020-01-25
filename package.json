@@ -1,8 +1,8 @@
 {
     "name": "duplicate-selection-or-line",
-    "displayName": "Duplicate selection or line",
+    "displayName": "Duplicate Selection Or Line",
     "description": "Duplicate functionality like you are used to.",
-    "version": "0.0.1",
+    "version": "0.0.2",
     "publisher": "ctf0",
     "repository": "https://github.com/ctf0/vscode-duplicate-selection",
     "engines": {
@@ -16,6 +16,22 @@
     ],
     "main": "./extension.js",
     "contributes": {
+        "configuration": {
+            "title": "Duplicate Selection Or Line",
+            "type": "object",
+            "properties": {
+                "duplicate-selection-or-line.addNewLineB4Duplication": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "if multiline selection, add new line before duplication"
+                },
+                "duplicate-selection-or-line.formatAfterDuplication": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "format multiline selection after duplication"
+                }
+            }
+        },
         "commands": [
             {
                 "command": "geeebe.duplicateText",

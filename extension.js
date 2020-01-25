@@ -1,7 +1,18 @@
 const vscode = require("vscode")
 const { EOL } = require('os')
+const PACKAGE_NAME = 'duplicate-selection-or-line'
 
-function activate(context) {
+let config = {}
+
+async function activate(context) {
+    await readConfig()
+
+    vscode.workspace.onDidChangeConfiguration(async (e) => {
+        if (e.affectsConfiguration(PACKAGE_NAME)) {
+            await readConfig()
+        }
+    })
+
     context.subscriptions.push(vscode.commands.registerCommand('geeebe.duplicateText', duplicateText))
 }
 
@@ -11,6 +22,8 @@ async function duplicateText() {
     if (!editor) {
         return
     }
+
+    let multi = false
 
     for (const selection of editor.selections) {
         let { start, end } = selection
@@ -24,9 +37,10 @@ async function duplicateText() {
 
             // Duplicate selection
             else {
+                multi = true
                 const text = editor.document.getText(selection)
 
-                if (!selection.isSingleLine) {
+                if (!selection.isSingleLine && config.addNewLineB4Duplication) {
                     edit.insert(end, `${EOL}${text}`)
                 } else {
                     edit.insert(start, text)
@@ -34,6 +48,14 @@ async function duplicateText() {
             }
         })
     }
+
+    if (multi && config.formatAfterDuplication) {
+        vscode.commands.executeCommand('editor.action.formatSelection')
+    }
+}
+
+async function readConfig() {
+    return config = await vscode.workspace.getConfiguration(PACKAGE_NAME)
 }
 
 function deactivate() { }
