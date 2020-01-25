@@ -1,0 +1,48 @@
+{
+    "name": "duplicate-selection-or-line",
+    "displayName": "Duplicate selection or line",
+    "description": "Duplicate functionality like you are used to.",
+    "version": "0.0.1",
+    "publisher": "ctf0",
+    "repository": "https://github.com/ctf0/vscode-duplicate-selection",
+    "engines": {
+        "vscode": "^1.41.0"
+    },
+    "categories": [
+        "Other"
+    ],
+    "activationEvents": [
+        "onCommand:geeebe.duplicateText"
+    ],
+    "main": "./extension.js",
+    "contributes": {
+        "commands": [
+            {
+                "command": "geeebe.duplicateText",
+                "title": "Duplicate selection or line"
+            }
+        ],
+        "keybindings": [
+            {
+                "mac": "cmd+d",
+                "key": "ctrl+d",
+                "command": "geeebe.duplicateText",
+                "when": "editorTextFocus"
+            }
+        ]
+    },
+    "scripts": {
+        "test": "node ./test/runTest.js"
+    },
+    "devDependencies": {
+        "@types/glob": "^7.1.1",
+        "@types/mocha": "^5.2.7",
+        "@types/node": "^12.11.7",
+        "@types/vscode": "^1.41.0",
+        "eslint": "^6.6.0",
+        "glob": "^7.1.5",
+        "mocha": "^6.2.2",
+        "typescript": "^3.6.4",
+        "vscode-test": "^1.2.2"
+    }
+}
