@@ -23,9 +23,9 @@ async function duplicateText() {
         return
     }
 
-    let multi = false
+    let sorted = sortSelections(editor.selections).reverse()
 
-    for (const selection of editor.selections) {
+    for (const selection of sorted) {
         let { start, end } = selection
 
         await editor.edit((edit) => {
@@ -37,25 +37,31 @@ async function duplicateText() {
 
             // Duplicate selection
             else {
-                multi = true
                 const text = editor.document.getText(selection)
 
                 if (!selection.isSingleLine && config.addNewLineB4Duplication) {
-                    edit.insert(end, `${EOL}${text}`)
+                    let space = editor.document.lineAt(start.line).text.match(/^\s+/)
+
+                    edit.insert(end, `${EOL}${space.length ? space[0] : ''}${text}`)
                 } else {
                     edit.insert(start, text)
                 }
             }
         })
     }
-
-    if (multi && config.formatAfterDuplication) {
-        vscode.commands.executeCommand('editor.action.formatSelection')
-    }
 }
 
 async function readConfig() {
     return config = await vscode.workspace.getConfiguration(PACKAGE_NAME)
+}
+
+function sortSelections(arr) {
+    return arr.sort((a, b) => { // make sure its sorted correctly
+        if (a.start.line > b.start.line) return 1
+        if (b.start.line > a.start.line) return -1
+
+        return 0
+    })
 }
 
 function deactivate() { }
