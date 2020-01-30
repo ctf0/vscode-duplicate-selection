@@ -42,7 +42,7 @@ async function duplicateText() {
                 if (!selection.isSingleLine && config.addNewLineB4Duplication) {
                     let space = editor.document.lineAt(start.line).text.match(/^\s+/)
 
-                    edit.insert(end, `${EOL}${space.length ? space[0] : ''}${text}`)
+                    edit.insert(end, `${EOL}${space && space.length ? space[0] : ''}${text}`)
                 } else {
                     edit.insert(start, text)
                 }

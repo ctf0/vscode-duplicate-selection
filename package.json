@@ -2,7 +2,7 @@
     "name": "duplicate-selection-or-line",
     "displayName": "Duplicate Selection Or Line",
     "description": "Duplicate functionality like you are used to.",
-    "version": "0.0.3",
+    "version": "0.0.4",
     "publisher": "ctf0",
     "repository": "https://github.com/ctf0/vscode-duplicate-selection",
     "engines": {
