@@ -8,3 +8,7 @@
 
 - fix multiple selections not working correctly
 - fix duplicate with new line indentations, remove config `formatAfterDuplication` which requires a formatter
+
+## 0.0.5
+
+- better UX, now it behaves as expected
