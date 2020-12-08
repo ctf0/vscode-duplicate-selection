@@ -12,3 +12,8 @@
 ## 0.0.5
 
 - better UX, now it behaves as expected
+
+## 0.0.6
+
+- fix package settings name
+- change command namespace

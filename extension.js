@@ -1,6 +1,6 @@
-const vscode = require("vscode")
-const { EOL } = require('os')
-const PACKAGE_NAME = 'duplicate-selection-or-line'
+const vscode = require('vscode')
+const {EOL} = require('os')
+const PACKAGE_NAME = 'duplicateSelectionOrLine'
 
 let config = {}
 let dis = []
@@ -16,41 +16,38 @@ async function activate(context) {
     })
 
     changesEvent.event((oldselection) => {
-        clearAll()
-
-        dis.push(
-            vscode.window.onDidChangeTextEditorSelection((e) => {
-                let newSelections = []
-                let { selections, textEditor } = e
-                for (let i = 0; i < selections.length; i++) {
-                    const current = selections[i]
-
-                    if (!current.start.isEqual(oldselection.start)) {
-                        newSelections.push(current)
-                        continue
-                    }
-
-                    let range = new vscode.Range(
-                        oldselection.end.line + 1,
-                        0,
-                        current.end.line,
-                        current.end.character
-                    )
-                    newSelections.push(new vscode.Selection(range.start, range.end))
-                }
-
-                textEditor.selections = newSelections
-                clearAll()
-            })
-        )
+        listenForChanges(oldselection)
     })
 
-    context.subscriptions.push(vscode.commands.registerCommand('geeebe.duplicateText', duplicateText))
+    context.subscriptions.push(vscode.commands.registerCommand('ds.duplicateText', duplicateText))
 }
 
-function clearAll() {
-    dis.map((e) => e.dispose())
-    dis = []
+function listenForChanges(oldselection) {
+    dis.push(
+        vscode.window.onDidChangeTextEditorSelection((e) => {
+            let newSelections = []
+            let {selections, textEditor} = e
+            for (let i = 0; i < selections.length; i++) {
+                const current = selections[i]
+
+                if (!current.start.isEqual(oldselection.start)) {
+                    newSelections.push(current)
+                    continue
+                }
+
+                let range = new vscode.Range(
+                    oldselection.end.line + 1,
+                    0,
+                    current.end.line,
+                    current.end.character
+                )
+                newSelections.push(new vscode.Selection(range.start, range.end))
+            }
+
+            textEditor.selections = newSelections
+            clearAll()
+        })
+    )
 }
 
 async function duplicateText() {
@@ -63,7 +60,7 @@ async function duplicateText() {
     let sorted = sortSelections(editor.selections).reverse()
 
     for (const selection of sorted) {
-        let { start, end } = selection
+        let {start, end} = selection
 
         await editor.edit(
             (edit) => {
@@ -81,19 +78,21 @@ async function duplicateText() {
                         changesEvent.fire(selection)
                         let space = editor.document.lineAt(start.line).text.match(/^\s+/)
 
-                        edit.insert(end, `${EOL}${space && space.length ? space[0] : ''}${text}`)
+                        edit.insert(end, `${EOL}${space ? space.join('') : ''}${text}`)
                     } else {
                         edit.insert(start, text)
                     }
                 }
             },
-            { undoStopBefore: false, undoStopAfter: false }
+            {undoStopBefore: false, undoStopAfter: false}
         )
     }
 }
 
-async function readConfig() {
-    return config = await vscode.workspace.getConfiguration(PACKAGE_NAME)
+/* Util --------------------------------------------------------------------- */
+function clearAll() {
+    dis.map((e) => e.dispose())
+    dis = []
 }
 
 function sortSelections(arr) {
@@ -104,6 +103,13 @@ function sortSelections(arr) {
         return 0
     })
 }
+
+/* Config --------------------------------------------------------------------- */
+async function readConfig() {
+    return config = await vscode.workspace.getConfiguration(PACKAGE_NAME)
+}
+
+/* --------------------------------------------------------------------- */
 
 function deactivate() { }
 
